@@ -43,7 +43,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./html  # 假设 Vite 输出目录为 html
+          publish_dir: ./html  #  Vite 输出目录为 html
           publish_branch: gh-pages
 
       - name: Package build output
