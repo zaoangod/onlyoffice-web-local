@@ -7,7 +7,6 @@
 <script lang="ts" setup>
 import { onMounted, onBeforeUnmount, ref, watchEffect, watch } from 'vue'
 import { getDocumentType, DocmentType } from '@/utils/util'
-import { saveAs } from 'file-saver'
 import { g_sEmpty_bin } from '@/utils/empty_bin'
 // @ts-ignore
 import {

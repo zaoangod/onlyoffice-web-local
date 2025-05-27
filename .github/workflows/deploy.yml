@@ -38,13 +38,13 @@ jobs:
       - name: 压缩构建目录为 html.zip
         run: zip -r html.zip html
 
-      # 第七步：将源码打包成 source.zip（排除 .git、node_modules 和 html）
-      - name: 压缩源码为 source.zip
-        run: zip -r source.zip . -x '*.git*' 'node_modules/*' 'html/*'
+      # # 第七步：将源码打包成 source.zip（排除 .git、node_modules 和 html）
+      # - name: 压缩源码为 source.zip
+      #   run: zip -r source.zip . -x '*.git*' 'node_modules/*' 'html/*'
 
-      # 第八步：将源码打包成 source.tar（同样排除不必要内容）
-      - name: 压缩源码为 source.tar
-        run: tar --exclude='./node_modules' --exclude='./.git' --exclude='./html' -cvf source.tar .
+      # # 第八步：将源码打包成 source.tar（同样排除不必要内容）
+      # - name: 压缩源码为 source.tar
+      #   run: tar --exclude='./node_modules' --exclude='./.git' --exclude='./html' -cvf source.tar .
 
       # 第九步：部署到 GitHub Pages
       - name: 部署到 GitHub Pages
@@ -61,7 +61,5 @@ jobs:
           name: Release ${{ github.run_number }}      # Release 名称
           files: |
             html.zip
-            source.zip
-            source.tar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 使用 GitHub 自动生成的 token 授权

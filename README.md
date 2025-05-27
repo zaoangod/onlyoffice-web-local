@@ -4,6 +4,39 @@
 
 [live-demo🪄](https://sweetwisdom.github.io/onlyoffice-web-local/)
 
+
+
+
+## 📄 打开远程文件
+
+### 功能说明
+
+通过路由参数自动下载并打开远程 Office 文件（如 `.docx`、`.pptx` 等），并将其转换为 `File` 对象供后续使用（如预览或编辑）。
+
+### 使用方法
+
+页面地址需包含以下参数：
+
+* `url`（必填）：远程文件地址
+* `filename`（可选）：文件名，如果未提供将尝试自动解析
+
+示例：
+[00.xlsx](https://sweetwisdom.github.io/onlyoffice-web-local/#/?url=https://sweetwisdom.github.io/react-filePreview/filePreview/00.xlsx)
+
+```
+?filename=00.pptx&url=https://example.com/files/00.pptx
+```
+
+### 文件名获取优先级
+
+1. 路由参数 `filename`
+2. 从 `url` 中解析
+3. 从响应头 `Content-Disposition` 提取
+
+若无法获取文件名，将终止操作并提示错误。
+
+
+
 ## word
 
 ![recording](./.imgs/recording.gif)
