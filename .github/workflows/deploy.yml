@@ -1,88 +1,67 @@
-name: Deploy Vite site to GitHub Pages and Create Release
+name: 部署 Vite 项目到 GitHub Pages 并发布 Release 附件
 
 on:
   push:
     branches:
-      - main  # 确认分支名
+      - main  # 当 main 分支有 push 时触发
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # 使用最新版本的 Ubuntu 作为运行环境
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # 获取完整历史以便生成源码快照
+      # 第一步：检出仓库代码
+      - name: 拉取代码
+        uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      # 第二步：设置 Node.js 环境
+      - name: 设置 Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: 20  # 指定 Node.js 版本
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v3
+      # 第三步：安装 pnpm（版本 10）
+      - name: 设置 pnpm
+        uses: pnpm/action-setup@v2
         with:
           version: 10
-          run_install: false
+          run_install: false  # 不自动安装依赖，下一步手动执行
 
-      - name: Cache pnpm
-        uses: actions/cache@v4
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
+      # 第四步：安装依赖
+      - name: 安装依赖
+        run: pnpm install
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build
+      # 第五步：构建项目
+      - name: 构建项目
         run: pnpm run build
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+      # 第六步：将构建产物打包成 html.zip
+      - name: 压缩构建目录为 html.zip
+        run: zip -r html.zip html
+
+      # 第七步：将源码打包成 source.zip（排除 .git、node_modules 和 html）
+      - name: 压缩源码为 source.zip
+        run: zip -r source.zip . -x '*.git*' 'node_modules/*' 'html/*'
+
+      # 第八步：将源码打包成 source.tar（同样排除不必要内容）
+      - name: 压缩源码为 source.tar
+        run: tar --exclude='./node_modules' --exclude='./.git' --exclude='./html' -cvf source.tar .
+
+      # 第九步：部署到 GitHub Pages
+      - name: 部署到 GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./html  #  Vite 输出目录为 html
-          publish_branch: gh-pages
+          publish_dir: ./html  # 指定构建输出目录
 
-      - name: Package build output
-        run: |
-          zip -r html.zip html
-        # 打包 html 目录为 html.zip
-
-      - name: Package source code
-        run: |
-          git archive --format=zip --output=source.zip HEAD
-        # 打包当前分支源码为 source.zip
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # 第十步：创建 GitHub Release 并上传压缩包
+      - name: 发布 Release 并上传构建包
+        uses: softprops/action-gh-release@v1
         with:
-          tag_name: v${{ github.run_number }}  # 使用工作流运行编号作为版本号
-          release_name: Release v${{ github.run_number }}
-          draft: false
-          prerelease: false
-
-      - name: Upload build artifact
-        uses: actions/upload-release-asset@v1
+          tag_name: release-${{ github.run_number }}  # 每次构建使用唯一的 tag
+          name: Release ${{ github.run_number }}      # Release 名称
+          files: |
+            html.zip
+            source.zip
+            source.tar
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./html.zip
-          asset_name: html.zip
-          asset_content_type: application/zip
-
-      - name: Upload source code artifact
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./source.zip
-          asset_name: source.zip
-          asset_content_type: application/zip
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 使用 GitHub 自动生成的 token 授权
