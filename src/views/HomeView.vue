@@ -92,7 +92,7 @@ const onOpenDocument = async () => {
 async function initFileUrl() {
   const route = useRoute()
   const url = route.query.url as string | undefined
-  const filenameParam = route.query.name as string | undefined
+  const filenameParam = route.query.filename as string | undefined
   if (!url) {
     console.warn('未提供文件 URL')
     return

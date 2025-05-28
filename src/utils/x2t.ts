@@ -335,7 +335,7 @@ class X2TConverter {
 
         const sanitizedBase = this.sanitizeFileName(originalFileName).replace(/\.[^/.]+$/, '')
         const binFileName = `${sanitizedBase}.bin`
-        const outputFileName = `${sanitizedBase}.${targetExt}`
+        const outputFileName = `${sanitizedBase}.${targetExt.toLowerCase()}`
 
         try {
             // 写入 bin 文件
@@ -465,6 +465,10 @@ class X2TConverter {
         fileName: string,
         mimeType?: string,
     ): Promise<void> {
+        if (!(window as any).showSaveFilePicker) {
+            this.downloadFile(data, fileName)
+            return
+        }
         try {
             // 获取文件扩展名并确定 MIME 类型
             const extension = fileName.split('.').pop()?.toLowerCase() || ''
