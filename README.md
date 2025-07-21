@@ -1,61 +1,76 @@
 # office-web-local
 
-基于only-office的纯本地项目，支持本地`打开、编辑`office文档
+A purely local project based on OnlyOffice, supporting local `opening and editing` of Office documents.
 
-[live-demo🪄](https://sweetwisdom.github.io/onlyoffice-web-local/)
+[Live Demo🪄](https://sweetwisdom.github.io/onlyoffice-web-local/)
+
+A local web-based document editor based on OnlyOffice, allowing you to edit documents directly in your browser without server-side processing, ensuring your privacy and security.
 
 
+[English](README.md) | [中文](readme.zh.md)
 
 
-## 📄 打开远程文件
+## ✨ Key Features
 
-### 功能说明
+- 🔒 **Privacy-First**: All document processing happens locally in your browser, with no uploads to any server
+- 📝 **Multi-Format Support**: Supports DOCX, XLSX, PPTX, and many other document formats
+- ⚡ **Real-Time Editing**: Provides smooth real-time document editing experience
+- 🚀 **No Server Required**: Pure frontend implementation with no server-side processing needed
+- 🎯 **Ready to Use**: Start editing documents immediately by opening the webpage
 
-通过路由参数自动下载并打开远程 Office 文件（如 `.docx`、`.pptx` 等），并将其转换为 `File` 对象供后续使用（如预览或编辑）。
+## 🛠️ Technical Architecture
 
-### 使用方法
+This project is built on the following core technologies:
 
-页面地址需包含以下参数：
+- **OnlyOffice SDK**: Provides powerful document editing capabilities
+- **WebAssembly**: Implements document format conversion through x2t-wasm
+- **Pure Frontend Architecture**: All functionality runs in the browser
 
-* `url`（必填）：远程文件地址
-* `filename`（可选）：文件名，如果未提供将尝试自动解析
+## 📄 Opening Remote Files
 
-示例：
+### Functionality
+
+Automatically downloads and opens remote Office files (e.g., `.docx`, `.pptx`) via route parameters, converting them into `File` objects for further use (e.g., preview or editing).
+
+### Usage
+
+The page URL must include the following parameters:
+
+- `url` (required): Remote file address
+- `filename` (optional): File name; if not provided, it will attempt to auto-resolve
+
+Example:
 [00.xlsx](https://sweetwisdom.github.io/onlyoffice-web-local/#/?url=https://sweetwisdom.github.io/react-filePreview/filePreview/00.xlsx)
 
 ```
 ?filename=00.pptx&url=https://example.com/files/00.pptx
 ```
 
-### 文件名获取优先级
+### File Name Retrieval Priority
 
-1. 路由参数 `filename`
-2. 从 `url` 中解析
-3. 从响应头 `Content-Disposition` 提取
+1. Route parameter `filename`
+2. Parsed from `url`
+3. Extracted from response header `Content-Disposition`
 
-若无法获取文件名，将终止操作并提示错误。
+If the file name cannot be retrieved, the operation will terminate with an error prompt.
 
-
-
-## word
+## Word
 
 ![recording](./.imgs/recording.gif)
 
-## excel
+## Excel
 
 ![image-20250524104950359](./.imgs/image-20250524104950359.png)
 
-## ppt
+## PPT
 
 ![image-20250524105044644](./.imgs/image-20250524105044644.png)
 
-
-
-## 导出文档
+## Export Document
 
 ![image-20250524104854846](./.imgs/image-20250524104854846.png)
 
-## 开发支持
+## Development Setup
 
 ```sh
 pnpm install
@@ -67,33 +82,34 @@ pnpm install
 pnpm dev
 ```
 
-### Type-Check, Compile and Minify for Production
+### Type-Check, Compile, and Minify for Production
 
 ```sh
 pnpm build
 ```
 
-## Docker 支持
+## Docker Support
 
-自定义镜像名为 vue-local-office 的镜像（请注意下面命令末尾有一个点 . 表示使用当前路径下的 Dockerfile 文件，可根据实际情况指定路径）
+Build a custom image named `vue-local-office` (note: the `.` at the end of the command indicates using the Dockerfile in the current directory; adjust the path as needed):
 
+```sh
 docker build -t vue-local-office .
+```
 
-端口映射并启动 docker 容器（8080:80：表示在容器中使用 80 端口，并将该端口转发到主机的 8080 端口；local-office：表示自定义容器名；vue-local-office：表示自定义镜像名）
+Map ports and start the Docker container (8080:80 maps the container's port 80 to the host's port 8080; `local-office` is the custom container name; `vue-local-office` is the custom image name):
 
+```sh
 docker run -dp 8080:80 --name local-office vue-local-office
+```
 
-操作完上面两个命令后，在浏览器打开 http://localhost:8080 即可预览
+After executing the above commands, open http://localhost:8080 in a browser to preview.
 
-## 技术原理
+## Technical Details
 
-使用x2t-wam替代onlyofice服务
+- Uses `x2t-wasm` as a replacement for OnlyOffice services
+- Utilizes OnlyOffice WebSDK for editing (sourced from `se-office`)
 
-使用only-office websdk  实现编辑(来自se-office)
+## References
 
-## 参考
-
-[Qihoo360/se-office: se-office扩展，提供基于开放标准的全功能办公生产力套件，基于浏览器预览和编辑office。](https://github.com/Qihoo360/se-office)
-
-[cryptpad/onlyoffice-x2t-wasm: CryptPad WebAssembly file conversion tool](https://github.com/cryptpad/onlyoffice-x2t-wasm)
-
+- [Qihoo360/se-office: A full-featured office productivity suite based on open standards, enabling browser-based preview and editing of Office files.](https://github.com/Qihoo360/se-office)
+- [cryptpad/onlyoffice-x2t-wasm: CryptPad WebAssembly file conversion tool](https://github.com/cryptpad/onlyoffice-x2t-wasm)
